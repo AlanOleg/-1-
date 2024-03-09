@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <vector>
@@ -14,31 +14,10 @@ struct exhibit {
 };
 
 class Exhibits {
+    friend ostream& operator<<(ostream& os, Exhibits& exhibits);
+    friend istream& operator>>(istream& is, Exhibits& exhibits);
 public:
-    vector<exhibit> exhibits;
     Exhibits() {
-    };
-    Exhibits(string file_name) {
-        ifstream file(file_name);
-        if (file.is_open()) {
-            string line;
-            while (getline(file, line)) {
-                string kusok;
-                istringstream ss(line);
-                exhibit exhibit;
-                ss >> kusok;
-                exhibit.name = kusok;
-                ss >> kusok;
-                exhibit.days = stod(kusok);
-                ss >> kusok;
-                exhibit.price_per_day = stod(kusok);
-                this->exhibits.push_back(exhibit);
-            }
-            file.close();
-        }
-        else {
-            cout << "Input file didn't open";
-        }
     };
     void print(string name) { // По названию
         for (int i = 0; i < exhibits.size(); i++) {
@@ -79,10 +58,14 @@ public:
     void print_all() {
         ofstream file("output.txt");
         if (not file.is_open()) {
-            cout << "Output file didn't open";
+            cout << "Output file didn't open.";
         }
         double max = 0;
         string max_name;
+        cout << this->exhibits.size() << endl;;
+        if (file.is_open()) {
+            file << exhibits.size() << endl;
+        }
         for (int i = 0; i < exhibits.size(); i++) {
             cout << i << ") Name: " << exhibits[i].name << "; Days: " << exhibits[i].days << "; Price per day: " << exhibits[i].price_per_day << endl;
             if (this->total_price(i) > max) {
@@ -116,6 +99,26 @@ public:
             }
         }
     };
+private:
+    vector<exhibit> exhibits;
+};
+
+ostream& operator<<(ostream& os, Exhibits& exhibits) {
+    exhibits.print_all();
+    return os;
+};
+
+istream& operator>>(istream& is, Exhibits& exhibits) {
+    int amount;
+    is >> amount;
+    for (int i = 0; i < amount; ++i) {
+        exhibit exhibit;
+        is >> exhibit.name;
+        is >> exhibit.days;
+        is >> exhibit.price_per_day;
+        exhibits.exhibits.push_back(exhibit);
+    }
+    return is;
 };
 
 int main()
@@ -130,6 +133,8 @@ int main()
     };
     exhibits.print_all();
     cout << "Total price of '" << exhibits[i].name << "' exhibit = " << exhibits.total_price(3) << endl;*/
-    Exhibits exhibits("input.txt");
-    exhibits.print_all();
+    ifstream file("input.txt");
+    Exhibits exhibits;
+    file >> exhibits;
+    cout << exhibits;
 }
