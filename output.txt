@@ -1,0 +1,5 @@
+3
+Bittergem 5 8
+Throngler 6 66
+Lenin 19 22
+Lenin has the highest exhibit price of 396
